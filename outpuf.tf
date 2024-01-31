@@ -5,3 +5,7 @@ output "webserver_ip" {
 output "vpc_id" {
   value = aws_vpc.dev_vpc.id
 }
+
+output "rt_id" {
+  value = aws_route_table.dev_rt.id
+}
