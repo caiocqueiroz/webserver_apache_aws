@@ -81,6 +81,7 @@ jobs:
     - name: Print Terraform Output
       run: |
         terraform init
+        echo "Valor do output sera adicionar abaixo"
         terraform output -raw webserver_ip
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
