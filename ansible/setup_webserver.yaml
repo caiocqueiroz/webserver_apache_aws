@@ -1,0 +1,18 @@
+- hosts: all
+  become: yes
+  tasks:
+  - name: Atualizar pacotes APT
+    apt:
+      update_cache: yes
+
+  - name: Instalar Apache
+    apt:
+      name: apache2
+      state: present
+
+  - name: Copiar conteúdo do site para o Apache
+    copy:
+      src: ../webcontent/
+      dest: /var/www/html/
+      owner: www-data
+      group: www-data
