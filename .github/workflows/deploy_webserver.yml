@@ -86,8 +86,10 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
 
     - name: Get Public IP Output
-      id: get_ip
-      run: echo "INSTANCE_IP=$(terraform output -raw webserver_ip)" >> $GITHUB_ENV
+      run: |
+        ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
+        echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
+
 
     - name: Run Ansible Playbook
       run: ansible-playbook -i "${{ env.INSTANCE_IP }}," setup.yml --private-key ~/.ssh/id_rsa
