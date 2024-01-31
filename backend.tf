@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "dev-tf-stated-kqz"
+    bucket = "dev-tf-states-kqz"
     key = "terraform.tfstate"
     region = "us-east-1"
     
