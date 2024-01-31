@@ -1,2 +1,5 @@
 webserver_dev
 webserver_dev.pub
+*.terraform
+*terraform*
+*.tfstate
