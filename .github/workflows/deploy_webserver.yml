@@ -89,14 +89,14 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
 
-    - name: Get Public IP Output
-      run: |
-        terraform init
-        ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
-        echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    # - name: Get Public IP Output
+    #   run: |
+    #     terraform init
+    #     ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
+    #     echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 
     - name: Run Ansible Playbook
