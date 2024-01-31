@@ -12,5 +12,5 @@ output "rt_id" {
 
 output "cidr_block" {
   value = aws_vpc.dev_vpc.cidr_block
-  
+
 }
