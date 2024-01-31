@@ -18,7 +18,7 @@ resource "aws_instance" "webserver_dev" {
 
 resource "aws_key_pair" "webserver_key" {
   key_name   = "deployer-key"
-  public_key = file(var.key_value)
+  public_key = var.key_value
 }
 
 #Network configs
