@@ -78,49 +78,39 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Print Terraform Output
+    - name: Install Ansible
+      run: pip install ansible
+
+    - name: Get Public IP Output
       run: |
         terraform init
+        terraform output -raw webserver_ip
         ip=$(terraform output -raw webserver_ip | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
-        echo "Valor do output será adicionado abaixo"
         echo $ip
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    # - name: Install Ansible
-    #   run: pip install ansible
+    - name: Set up SSH key
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ env.INSTANCE_IP }} >> ~/.ssh/known_hosts
 
-    # - name: Get Public IP Output
-    #   run: |
-    #     terraform init
-    #     terraform output -raw webserver_ip
-    #     ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
-    #     echo $ip
-    #     echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
-    #   env:
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    # - name: Set up SSH key
-    #   env:
-    #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-    #   run: |
-    #     mkdir -p ~/.ssh
-    #     echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    #     chmod 600 ~/.ssh/id_rsa
-    #     ssh-keyscan -H ${{ env.INSTANCE_IP }} >> ~/.ssh/known_hosts
-
-    # - name: Run Ansible Playbook
-    #   run: |
-    #     echo $INSTANCE_IP
-    #     ansible-playbook -i 'ubuntu@${{ env.INSTANCE_IP }}', ./ansible/setup_webserver.yaml --private-key ~/.ssh/id_rsa
+    - name: Run Ansible Playbook
+      run: |
+        echo $INSTANCE_IP
+        ansible-playbook -i 'ubuntu@${{ env.INSTANCE_IP }}', ./ansible/setup_webserver.yaml --private-key ~/.ssh/id_rsa
       
-    # - name: Terraform Destroy
-    #   if: github.ref == 'refs/heads/tfdestroy' && github.event_name == 'push'
-    #   run: |
-    #     terraform init 
-    #     terraform destroy -auto-approve -var="key_value=${{ secrets.SSH_PRIVATE_KEY_PUB }}"
-    #   env:
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: Terraform Destroy
+      if: github.ref == 'refs/heads/tfdestroy' && github.event_name == 'push'
+      run: |
+        terraform init 
+        terraform destroy -auto-approve -var="key_value=${{ secrets.SSH_PRIVATE_KEY_PUB }}"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
