@@ -91,6 +91,7 @@ jobs:
 
     - name: Get Public IP Output
       run: |
+        terraform init
         ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
         echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
 
