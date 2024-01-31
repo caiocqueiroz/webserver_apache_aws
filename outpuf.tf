@@ -9,3 +9,8 @@ output "vpc_id" {
 output "rt_id" {
   value = aws_route_table.dev_rt.id
 }
+
+output "cidr_block" {
+  value = aws_vpc.dev_vpc.cidr_block
+  
+}
