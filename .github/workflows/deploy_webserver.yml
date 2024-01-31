@@ -103,7 +103,7 @@ jobs:
       run: |
         ls -lah
         pwd
-        ansible-playbook -i "${{ env.INSTANCE_IP }}," ./ansible/setup_webserver.yml --private-key ~/.ssh/id_rsa
+        ansible-playbook -i "${{ env.INSTANCE_IP }}," ./ansible/setup_webserver.yaml --private-key ~/.ssh/id_rsa
       
     - name: Terraform Destroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
