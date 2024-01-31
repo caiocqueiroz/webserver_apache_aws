@@ -83,6 +83,7 @@ jobs:
 
     - name: Get Public IP Output
       run: |
+        terraform init
         terraform output -raw webserver_ip
         ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
         echo $ip
