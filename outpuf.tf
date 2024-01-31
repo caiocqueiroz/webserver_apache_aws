@@ -3,5 +3,5 @@ output "webserver_ip" {
 }
 
 output "vpc_id" {
-  value = aws_vpc.dev_vpc.vpc_id
+  value = aws_vpc.dev_vpc.id
 }
