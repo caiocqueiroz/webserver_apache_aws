@@ -74,6 +74,10 @@ jobs:
       with:
         python-version: '3.x'  # Versão do Python para instalar o Ansible
 
+      # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Install Ansible
       run: pip install ansible
 
@@ -90,10 +94,12 @@ jobs:
         ip=$(terraform output -raw webserver_ip | tr -d '%\n\r')
         echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
 
-
     - name: Run Ansible Playbook
-      run: ansible-playbook -i "${{ env.INSTANCE_IP }}," ./ansible/setup_webserver.yml --private-key ~/.ssh/id_rsa
-
+      run: |
+        ls -lah
+        pwd
+        ansible-playbook -i "${{ env.INSTANCE_IP }}," ./ansible/setup_webserver.yml --private-key ~/.ssh/id_rsa
+      
     - name: Terraform Destroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform destroy -auto-approve
