@@ -101,8 +101,7 @@ jobs:
 
     - name: Run Ansible Playbook
       run: |
-        ls -lah
-        pwd
+        echo $INSTANCE_IP
         ansible-playbook -i "${{ env.INSTANCE_IP }}," ./ansible/setup_webserver.yaml --private-key ~/.ssh/id_rsa
       
     - name: Terraform Destroy
