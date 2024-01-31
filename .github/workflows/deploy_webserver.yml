@@ -81,8 +81,9 @@ jobs:
     - name: Print Terraform Output
       run: |
         terraform init
+        ip=$(terraform output -raw webserver_ip | awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ {print $0}')
         echo "Valor do output sera adicionar abaixo"
-        terraform output -raw webserver_ip
+        echo $ip
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
